@@ -1,37 +1,86 @@
-const { StacksTestnet } = require('@stacks/network');
-const { makeSTXTokenTransfer, AnchorMode } = require('@stacks/transactions');
-const { contracts } = require('../config/contracts');
-
-const network = new StacksTestnet();
-
-const callStacksContract = async (functionName, functionArgs) => {
-  // This function remains the same as it's a read-only operation
-  const result = await callReadOnlyFunction({
-    contractAddress: contracts.stacks.contractAddress,
-    contractName: contracts.stacks.contractName,
-    functionName,
-    functionArgs,
-    network,
-  });
-  return result;
-};
-
-const initiateStacksTransfer = async (amount, recipient) => {
-  const txOptions = {
-    recipient,
-    amount,
-    senderKey: 'unused',
-    network,
-    anchorMode: AnchorMode.Any,
-  };
-
-  const transaction = await makeSTXTokenTransfer(txOptions);
+const { 
+    makeSTXTokenTransfer, 
+    AnchorMode,
+    createAssetInfo,
+    FungibleConditionCode,
+    makeContractCall,
+    broadcastTransaction
+  } = require('@stacks/transactions');
+  const { StacksMainnet, StacksTestnet } = require('@stacks/network');
+  const { contracts } = require('../config/contracts');
   
-  // Instead of broadcasting, return the unsigned transaction
-  return transaction;
-};
-
-module.exports = {
-  callStacksContract,
-  initiateStacksTransfer,
-};
+  const network = process.env.STACKS_NETWORK === 'mainnet' ? new StacksMainnet() : new StacksTestnet();
+  
+  const callStacksContract = async (functionName, functionArgs) => {
+    const contractAddress = contracts.stacks.contractAddress;
+    const contractName = contracts.stacks.contractName;
+  
+    const txOptions = {
+      contractAddress,
+      contractName,
+      functionName,
+      functionArgs,
+      senderKey: process.env.STACKS_PRIVATE_KEY,
+      validateWithAbi: true,
+      network,
+      anchorMode: AnchorMode.Any,
+    };
+  
+    const transaction = await makeContractCall(txOptions);
+    const broadcastResponse = await broadcastTransaction(transaction, network);
+    return broadcastResponse;
+  };
+  
+  const initiateStacksTransfer = async (amount, recipient) => {
+    const contractAddress = contracts.stacks.contractAddress;
+    const contractName = contracts.stacks.contractName;
+    const functionName = 'initiate-crosschain-transfer';
+    const sbtcTokenAddress = await callStacksContract('get-sbtc-token', []);
+  
+    const postConditions = [
+      makeStandardSTXPostCondition(
+        contractAddress,
+        FungibleConditionCode.LessEqual,
+        amount
+      ),
+    ];
+  
+    const txOptions = {
+      contractAddress,
+      contractName,
+      functionName,
+      functionArgs: [
+        createAssetInfo(sbtcTokenAddress.split('.')[0], sbtcTokenAddress.split('.')[1], 'sbtc'),
+        amount,
+        recipient
+      ],
+      senderKey: process.env.STACKS_PRIVATE_KEY,
+      validateWithAbi: true,
+      network,
+      anchorMode: AnchorMode.Any,
+      postConditions,
+    };
+  
+    const transaction = await makeContractCall(txOptions);
+    const broadcastResponse = await broadcastTransaction(transaction, network);
+    return broadcastResponse;
+  };
+  
+  const transferSTX = async (recipient, amount) => {
+    const transaction = await makeSTXTokenTransfer({
+      recipient,
+      amount,
+      senderKey: process.env.STACKS_PRIVATE_KEY,
+      network,
+      anchorMode: AnchorMode.Any,
+    });
+  
+    const broadcastResponse = await broadcastTransaction(transaction, network);
+    return broadcastResponse;
+  };
+  
+  module.exports = {
+    callStacksContract,
+    initiateStacksTransfer,
+    transferSTX,
+  };
