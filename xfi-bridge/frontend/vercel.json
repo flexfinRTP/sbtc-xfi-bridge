@@ -1,0 +1,19 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "frontend/package.json",
+        "use": "@vercel/next"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "frontend/$1"
+      }
+    ],
+    "env": {
+      "STACKS_NETWORK": "testnet",
+      "CROSSFI_RPC_URL": "https://testnet-evm.crossfi.com"
+    }
+  }
