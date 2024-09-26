@@ -24,12 +24,14 @@ contract SBTCBridge is Ownable, ReentrancyGuard {
     event Withdraw(address indexed user, uint256 amount);
     event CrossChainTransferInitiated(address indexed user, uint256 amount, bytes32 stacksRecipient);
     event CrossChainTransferConfirmed(bytes32 indexed stacksTxId, address recipient, uint256 amount);
+    event PricesUpdated(uint256 newSbtcPrice, uint256 newXfiPrice);
 
     constructor(address _xfiToken) {
         xfiToken = IERC20(_xfiToken);
     }
 
     function deposit(uint256 amount) external nonReentrant {
+        require(amount > 0, "Amount must be greater than 0");
         require(xfiToken.transferFrom(msg.sender, address(this), amount), "Transfer failed");
         userBalances[msg.sender] += amount;
         bridgeReserve += amount;
@@ -37,6 +39,7 @@ contract SBTCBridge is Ownable, ReentrancyGuard {
     }
 
     function withdraw(uint256 amount) external nonReentrant {
+        require(amount > 0, "Amount must be greater than 0");
         require(userBalances[msg.sender] >= amount, "Insufficient balance");
         require(bridgeReserve >= amount, "Insufficient bridge reserve");
         userBalances[msg.sender] -= amount;
@@ -46,6 +49,7 @@ contract SBTCBridge is Ownable, ReentrancyGuard {
     }
 
     function initiateCrossChainTransfer(uint256 amount, bytes32 stacksRecipient) external nonReentrant {
+        require(amount > 0, "Amount must be greater than 0");
         require(userBalances[msg.sender] >= amount, "Insufficient balance");
         userBalances[msg.sender] -= amount;
         bytes32 txId = keccak256(abi.encodePacked(block.timestamp, msg.sender, amount));
@@ -76,7 +80,9 @@ contract SBTCBridge is Ownable, ReentrancyGuard {
     }
 
     function updatePrices(uint256 newSbtcPrice, uint256 newXfiPrice) external onlyOwner {
+        require(newSbtcPrice > 0 && newXfiPrice > 0, "Invalid price");
         sbtcPrice = newSbtcPrice;
         xfiPrice = newXfiPrice;
+        emit PricesUpdated(newSbtcPrice, newXfiPrice);
     }
 }

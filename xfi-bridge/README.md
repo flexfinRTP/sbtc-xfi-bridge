@@ -1,6 +1,82 @@
 # XFI-sBTC Bridge
 
-This project implements a bridge between CrossFi (XFI) and Stacks Bitcoin (sBTC).
+## Overview
+
+This application provides a bridge between the Stacks blockchain (sBTC) and the CrossFi blockchain (XFI). It allows users to transfer assets between these two chains in a decentralized manner.
+
+## User Flow
+
+1. **Connect Wallets**
+   - User connects their Stacks wallet (Leather) for sBTC transactions
+   - User connects their Ethereum-compatible wallet (MetaMask) for XFI transactions
+
+2. **Initiate Transfer**
+   - User selects the source chain (Stacks or CrossFi)
+   - User enters the amount to transfer
+   - User provides the recipient address on the destination chain
+
+3. **Approve Transaction**
+   - If transferring from Stacks:
+     - User approves the transaction in their Leather wallet
+   - If transferring from CrossFi:
+     - User approves the transaction in MetaMask
+
+4. **Wait for Confirmation**
+   - The application monitors the transaction status
+   - User is notified when the transfer is complete
+
+## Token Mechanics
+
+This bridge uses a lock-and-mint mechanism:
+
+- When transferring from Stacks to CrossFi:
+  1. sBTC is locked in the Stacks bridge contract
+  2. An equivalent amount of wrapped sBTC (wsBTC) is minted on the CrossFi chain
+
+- When transferring from CrossFi to Stacks:
+  1. wsBTC is burned on the CrossFi chain
+  2. An equivalent amount of sBTC is unlocked on the Stacks chain
+
+This ensures that the total supply of sBTC + wsBTC remains constant, maintaining the peg to the underlying Bitcoin.
+
+## Technical Implementation
+
+### Stacks Side (sBTC)
+
+- The Clarity contract (`sbtc-bridge.clar`) handles locking and unlocking of sBTC
+- Key functions:
+  - `deposit`: Locks sBTC in the contract
+  - `withdraw`: Unlocks sBTC for users
+  - `initiate-crosschain-transfer`: Initiates a transfer to CrossFi
+  - `confirm-crosschain-transfer`: Confirms a transfer from CrossFi
+
+### CrossFi Side (XFI)
+
+- The Solidity contract (`SBTCBridge.sol`) handles minting and burning of wsBTC
+- Key functions:
+  - `deposit`: Mints wsBTC
+  - `withdraw`: Burns wsBTC
+  - `initiateCrossChainTransfer`: Initiates a transfer to Stacks
+  - `confirmCrossChainTransfer`: Confirms a transfer from Stacks
+
+### Backend
+
+- Coordinates between the two chains
+- Monitors for transfer events and initiates the corresponding action on the other chain
+- Provides API endpoints for the frontend to interact with
+
+### Frontend
+
+- Provides a user interface for initiating transfers
+- Connects to Leather wallet for Stacks transactions
+- Connects to MetaMask for CrossFi transactions
+- Displays transfer status and transaction history
+
+## Security Considerations
+
+- The bridge contracts on both chains have checks to ensure that the total supply of tokens remains consistent
+- Admin functions are protected and can only be called by the contract owner
+- Transaction signing is done client-side in the user's wallet for maximum security
 
 ## Contract Functions
 

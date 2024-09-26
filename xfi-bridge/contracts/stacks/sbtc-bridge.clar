@@ -10,6 +10,7 @@
 (define-constant err-invalid-price (err u103))
 (define-constant err-invalid-amount (err u104))
 (define-constant err-invalid-withdrawal (err u105))
+(define-constant err-invalid-recipient (err u107))
 
 ;; Data variables
 (define-data-var bridge-reserve uint u0)
@@ -75,6 +76,7 @@
     )
     (asserts! (> amount u0) err-invalid-amount)
     (asserts! (>= user-balance amount) err-not-enough-balance)
+    (asserts! (is-valid-recipient recipient) err-invalid-recipient)
     (map-set user-balances tx-sender (- user-balance amount))
     (map-set pending-withdrawals { txid: txid } { amount: amount, recipient: tx-sender })
     (ok txid)
@@ -110,4 +112,9 @@
     (map-set user-balances (get recipient withdrawal) (+ (get-balance (get recipient withdrawal)) (get amount withdrawal)))
     (ok true)
   )
+)
+
+;; Helper functions
+(define-private (is-valid-recipient (recipient (buff 32)))
+  (is-eq (len recipient) u32)
 )

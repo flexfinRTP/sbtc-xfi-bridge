@@ -1,9 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import Link from 'next/link';
 
 const App = () => {
   return (
+    <div>
+    <Header />
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600">
       <motion.div
         initial={{ opacity: 0, scale: 0.5 }}
@@ -24,6 +28,8 @@ const App = () => {
           </Link>
         </motion.div>
       </motion.div>
+    </div>
+    <Footer />
     </div>
   );
 };

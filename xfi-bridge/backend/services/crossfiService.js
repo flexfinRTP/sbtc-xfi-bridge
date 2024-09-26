@@ -16,11 +16,12 @@ const initiateCrossfiTransfer = async (amount, stacksRecipient, fromAddress) => 
     data: contract.methods.initiateCrossChainTransfer(amount, stacksRecipient).encodeABI(),
   };
 
+  // Note: In a production environment, you wouldn't sign transactions on the server.
+  // This is just for demonstration purposes.
   const signedTx = await web3.eth.accounts.signTransaction(tx, process.env.CROSSFI_PRIVATE_KEY);
   const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
   return receipt;
 };
-
 module.exports = {
   initiateCrossfiTransfer,
 };

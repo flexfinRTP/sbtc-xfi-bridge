@@ -3,25 +3,29 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FaBitcoin, FaStackOverflow } from 'react-icons/fa';
 import { SiHiveblockchain } from 'react-icons/si';
+import { useConnect } from '@stacks/connect-react';
 import { initiateStacksTransfer, initiateXfiTransfer } from '../utils/contracts';
 import { initiateTransfer, confirmStacksTransfer } from '../utils/api';
 
 const BridgeForm = () => {
+  const { authentication } = useConnect();
   const [fromChain, setFromChain] = useState('stacks');
   const [toChain, setToChain] = useState('crossfi');
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
   const [prices, setPrices] = useState({ btc: 0, xfi: 0, stx: 0 });
   const [error, setError] = useState('');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const fetchPrices = async () => {
       try {
         const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,crossfi-2,blockstack&vs_currencies=usd');
         setPrices({
           btc: response.data.bitcoin.usd,
           xfi: response.data['crossfi-2'].usd,
-          stx: response.data['blockstack'].usd
+          stx: response.data.blockstack.usd
         });
       } catch (error) {
         console.error('Error fetching prices:', error);
@@ -38,15 +42,21 @@ const BridgeForm = () => {
     setError('');
     try {
       if (fromChain === 'stacks') {
+        if (!authentication.isSignedIn()) {
+          throw new Error('Please connect your Stacks wallet first');
+        }
         await initiateStacksTransfer(amount, recipient);
       } else {
+        if (typeof window.ethereum === 'undefined') {
+          throw new Error('Please connect your MetaMask wallet first');
+        }
         const txHash = await initiateXfiTransfer(amount, recipient);
         await initiateTransfer(fromChain, toChain, amount, '', recipient);
         console.log('Transfer initiated:', txHash);
       }
     } catch (error) {
       console.error('Error initiating transfer:', error);
-      setError('Failed to initiate transfer. Please try again.');
+      setError(error.message || 'Failed to initiate transfer. Please try again.');
     }
   };
 
@@ -54,6 +64,10 @@ const BridgeForm = () => {
     { value: 'stacks', label: 'Stacks', icon: FaStackOverflow },
     { value: 'crossfi', label: 'CrossFi', icon: SiHiveblockchain },
   ];
+
+  if (!isClient) {
+    return null; // or a loading spinner
+  }
 
   return (
     <motion.div
