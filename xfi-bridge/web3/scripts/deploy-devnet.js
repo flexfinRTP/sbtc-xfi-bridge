@@ -1,7 +1,6 @@
-const { makeContractDeploy, broadcastTransaction, AnchorMode } = require('@stacks/transactions');
-const { StacksDevnet } = require('@stacks/network');
-const fs = require('fs');
-const { getAddressFromPrivateKey } = require('@stacks/transactions');
+import { makeContractDeploy, broadcastTransaction, AnchorMode, getAddressFromPrivateKey } from '@stacks/transactions';
+import { StacksDevnet } from '@stacks/network';
+import fs from 'fs';
 
 async function deployStacksContracts() {
   console.log('Starting Stacks devnet deployment...');
@@ -10,10 +9,10 @@ async function deployStacksContracts() {
   const privateKey = 'edf9aee84d9b7abc145504dde6726c64f369d37ee34ded868fabd876c26570bc01'; // Deployer private key from devnet.toml
 
   const contracts = [
-    { name: 'mock-xfi-token', path: './contracts/mock-xfi-token.clar' },
-    { name: 'mock-sbtc-token', path: './contracts/mock-sbtc-token.clar' },
-    { name: 'mock-stx-token', path: './contracts/mock-stx-token.clar' },
-    { name: 'sbtc-bridge', path: './contracts/sbtc-bridge.clar' }
+    { name: 'mock-xfi-token', path: './contracts/stacks/mock-xfi-token.clar' },
+    { name: 'mock-sbtc-token', path: './contracts/stacks/mock-sbtc-token.clar' },
+    { name: 'mock-stx-token', path: './contracts/stacks/mock-stx-token.clar' },
+    { name: 'sbtc-bridge', path: './contracts/stacks/sbtc-bridge.clar' }
   ];
 
   for (const contract of contracts) {

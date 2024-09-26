@@ -1,4 +1,4 @@
-const hre = require("hardhat");
+import hre from "hardhat";
 
 async function deployCrossFiContracts() {
   console.log('Starting CrossFi testnet deployment...');

@@ -6,16 +6,16 @@ telemetry = false
 cache_dir = "./.cache"
 
 [contracts.mock-xfi-token]
-path = "contracts/mock-xfi-token.clar"
+path = "contracts/stacks/mock-xfi-token.clar"
 
 [contracts.mock-sbtc-token]
-path = "contracts/mock-sbtc-token.clar"
+path = "contracts/stacks/mock-sbtc-token.clar"
 
 [contracts.mock-stx-token]
-path = "contracts/mock-stx-token.clar"
+path = "contracts/stacks/mock-stx-token.clar"
 
 [contracts.sbtc-bridge]
-path = "contracts/sbtc-bridge.clar"
+path = "contracts/stacks/sbtc-bridge.clar"
 
 [repl.analysis]
 passes = ["check_checker"]

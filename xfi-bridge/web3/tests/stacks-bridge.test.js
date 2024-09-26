@@ -1,6 +1,6 @@
-const { assert } = require('chai');
-const { mocknet } = require('@stacks/network');
-const { callReadOnlyFunction, makeContractCall, broadcastTransaction, uintCV, bufferCV, standardPrincipalCV } = require('@stacks/transactions');
+import { assert } from 'chai';
+import { mocknet } from '@stacks/network';
+import { callReadOnlyFunction, makeContractCall, broadcastTransaction, uintCV, bufferCV, standardPrincipalCV } from '@stacks/transactions';
 
 describe('sBTC Bridge Contract Tests', () => {
   const contractAddress = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';

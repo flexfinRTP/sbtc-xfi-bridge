@@ -159,14 +159,14 @@ npx hardhat test test/ethereum-tests.js --network sepolia
 
 To deploy the Stacks contract:
 ```
-node deploy-stacks-devnet.js
+node scripts/deploy-devnet.js
 node scripts/deploy-stacks.js
 ```
 
 To deploy the CrossFi contract:
 ```
 npx hardhat run scripts/deploy-crossfi.js --network crossfi
-npx hardhat run scripts/deploy-ethereum.js --network sepolia
+npx hardhat run scripts/deploy-sepolia.js --network sepolia
 ```
 
 Interact with contracts (Hardhat console)

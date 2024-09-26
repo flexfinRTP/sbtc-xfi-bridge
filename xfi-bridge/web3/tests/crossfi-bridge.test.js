@@ -1,5 +1,5 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+import { expect } from "chai";
+import { ethers } from "hardhat";
 
 describe("SBTCBridge", function () {
   let SBTCBridge, sbtcBridge, XFIToken, xfiToken, SBTCToken, sbtcToken, STXToken, stxToken, owner, addr1;
