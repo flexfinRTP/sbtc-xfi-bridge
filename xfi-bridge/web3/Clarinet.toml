@@ -1,0 +1,27 @@
+[project]
+name = "xfi-bridge"
+description = "A bridge between XFI and sBTC"
+authors = ["flexfinrtp"]
+telemetry = false
+cache_dir = "./.cache"
+
+[contracts.mock-xfi-token]
+path = "contracts/mock-xfi-token.clar"
+
+[contracts.mock-sbtc-token]
+path = "contracts/mock-sbtc-token.clar"
+
+[contracts.mock-stx-token]
+path = "contracts/mock-stx-token.clar"
+
+[contracts.sbtc-bridge]
+path = "contracts/sbtc-bridge.clar"
+
+[repl.analysis]
+passes = ["check_checker"]
+
+[repl.analysis.check_checker]
+strict = false
+trusted_sender = false
+trusted_caller = false
+callee_filter = false
