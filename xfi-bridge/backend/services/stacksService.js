@@ -1,10 +1,10 @@
 const {
-  makeSTXTokenTransfer,
-  AnchorMode,
-  createAssetInfo,
-  FungibleConditionCode,
   makeContractCall,
   broadcastTransaction,
+  uintCV,
+  bufferCV,
+  principalCV,
+  contractPrincipalCV,
 } = require("@stacks/transactions");
 const { StacksMainnet, StacksTestnet } = require("@stacks/network");
 const { contracts } = require("../config/contracts");
@@ -26,56 +26,35 @@ const callStacksContract = async (functionName, functionArgs) => {
     senderKey: process.env.STACKS_PRIVATE_KEY,
     validateWithAbi: true,
     network,
-    anchorMode: AnchorMode.Any,
+    anchorMode: 1,
   };
 
   const transaction = await makeContractCall(txOptions);
-  return transaction;
+  return broadcastTransaction(transaction, network);
 };
 
-const createUnsignedStacksTransaction = async (functionName, functionArgs) => {
-  const contractAddress = contracts.stacks.contractAddress;
-  const contractName = contracts.stacks.contractName;
-
-  const txOptions = {
-    contractAddress,
-    contractName,
-    functionName,
-    functionArgs,
-    network,
-    anchorMode: AnchorMode.Any,
-  };
-
-  const transaction = await makeContractCall(txOptions);
-  return transaction;
-};
-
-const initiateStacksTransfer = async (amount, recipient) => {
+const initiateStacksTransfer = async (amount, recipient, currency) => {
   const functionName = "initiate-crosschain-transfer";
+  const tokenContract = contracts.stacks[`${currency}TokenAddress`];
+
   const functionArgs = [
+    contractPrincipalCV(tokenContract.split('.')[0], tokenContract.split('.')[1]),
     uintCV(amount),
-    standardPrincipalCV(recipient)
+    bufferCV(Buffer.from(recipient.slice(2), 'hex')),
   ];
 
-  const transaction = await createUnsignedStacksTransaction(functionName, functionArgs);
-  return transaction;
+  return callStacksContract(functionName, functionArgs);
 };
 
-const transferSTX = async (recipient, amount) => {
-  const transaction = await makeSTXTokenTransfer({
-    recipient,
-    amount,
-    senderKey: process.env.STACKS_PRIVATE_KEY,
-    network,
-    anchorMode: AnchorMode.Any,
-  });
+const confirmCrossChainTransfer = async (txId) => {
+  const functionName = "confirm-crosschain-transfer";
+  const functionArgs = [bufferCV(Buffer.from(txId.slice(2), 'hex'))];
 
-  const broadcastResponse = await broadcastTransaction(transaction, network);
-  return broadcastResponse;
+  return callStacksContract(functionName, functionArgs);
 };
 
 module.exports = {
   callStacksContract,
   initiateStacksTransfer,
-  transferSTX,
+  confirmCrossChainTransfer,
 };

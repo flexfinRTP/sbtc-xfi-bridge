@@ -1,5 +1,3 @@
-;; sbtc-bridge contract
-
 (use-trait ft-trait .sip-010-trait.sip-010-trait)
 
 ;; Constants
@@ -10,8 +8,8 @@
 (define-constant err-invalid-price (err u103))
 (define-constant err-invalid-amount (err u104))
 (define-constant err-invalid-withdrawal (err u105))
-(define-constant err-invalid-recipient (err u107))
-(define-constant err-invalid-token (err u108))
+(define-constant err-invalid-recipient (err u106))
+(define-constant err-invalid-token (err u107))
 
 ;; Data variables
 (define-data-var bridge-reserve uint u0)
@@ -78,7 +76,7 @@
   (let
     (
       (user-balance (get-balance tx-sender token))
-      (txid (unwrap! (get-block-info? id-header-hash (- block-height u1)) (err u106)))
+      (txid (unwrap! (get-block-info? id-header-hash (- block-height u1)) err-invalid-withdrawal))
     )
     (asserts! (> amount u0) err-invalid-amount)
     (asserts! (>= user-balance amount) err-not-enough-balance)

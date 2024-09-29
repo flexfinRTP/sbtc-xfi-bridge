@@ -6,11 +6,12 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
-export const initiateTransfer = async (fromChain, toChain, amount, fromAddress, toAddress) => {
+export const initiateTransfer = async (fromChain, toChain, amount, currency, fromAddress, toAddress) => {
   const response = await api.post('/bridge/initiate-transfer', {
     fromChain,
     toChain,
     amount,
+    currency,
     fromAddress,
     toAddress,
   });
@@ -23,11 +24,16 @@ export const getTransactionStatus = async (txId) => {
 };
 
 export const getPrices = async () => {
-  const response = await api.get('/price/prices');
+  const response = await api.get('/bridge/prices');
   return response.data;
 };
 
 export const confirmStacksTransfer = async (txId) => {
   const response = await api.post('/bridge/confirm-stacks-transfer', { txId });
+  return response.data;
+};
+
+export const confirmCrossfiTransfer = async (txId) => {
+  const response = await api.post('/bridge/confirm-crossfi-transfer', { txId });
   return response.data;
 };

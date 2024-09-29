@@ -1,4 +1,4 @@
-# XFI-sBTC Bridge
+# XFI-sBTC Bridge API
 
 This project implements a bridge between CrossFi (XFI) and Stacks Bitcoin (sBTC).
 

@@ -15,7 +15,6 @@
   "license": "ISC",
   "dependencies": {
     "@hirosystems/clarinet-sdk": "^2.3.2",
-    "@openzeppelin/contracts": "^5.0.2",
     "@stacks/network": "^6.16.0",
     "@stacks/transactions": "^6.16.1",
     "@stacks/wallet-sdk": "^6.16.1",
@@ -35,6 +34,7 @@
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@nomiclabs/hardhat-waffle": "^2.0.6",
+    "@openzeppelin/contracts": "^5.0.2",
     "chai": "^5.1.1",
     "ethereum-waffle": "^4.0.10",
     "ethers": "^5.7.2",

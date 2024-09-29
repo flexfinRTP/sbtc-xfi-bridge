@@ -1,4 +1,4 @@
-# XFI-sBTC Bridge
+# XFI-sBTC Bridge Frontend
 
 This project implements a bridge between CrossFi (XFI) and Stacks Bitcoin (sBTC).
 
@@ -25,7 +25,7 @@ This project implements a bridge between CrossFi (XFI) and Stacks Bitcoin (sBTC)
 
 1. Navigate to the frontend directory:
    ```
-   cd xfi-sbtc-bridge/frontend
+   cd xfi-bridge/frontend
    ```
 
 2. Install dependencies:
@@ -35,7 +35,7 @@ This project implements a bridge between CrossFi (XFI) and Stacks Bitcoin (sBTC)
 
 3. Start the frontend development server:
    ```
-   npm start
+   npm run dev
    ```
 
 ## Testing

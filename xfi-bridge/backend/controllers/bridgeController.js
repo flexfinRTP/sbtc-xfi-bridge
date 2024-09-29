@@ -4,15 +4,15 @@ const { initiateCrossfiTransfer } = require('../services/crossfiService');
 
 exports.initiateTransfer = async (req, res) => {
   try {
-    const { fromChain, toChain, amount, fromAddress, toAddress } = req.body;
+    const { fromChain, toChain, amount, fromAddress, toAddress, currency } = req.body;
 
     let txId, unsignedTx;
     if (fromChain === 'stacks') {
-      unsignedTx = await initiateStacksTransfer(amount, toAddress);
+      unsignedTx = await initiateStacksTransfer(amount, toAddress, currency);
       // Return the unsigned transaction to the frontend
       return res.status(200).json({ unsignedTx: unsignedTx.serialize().toString('hex') });
     } else if (fromChain === 'crossfi') {
-      const result = await initiateCrossfiTransfer(amount, toAddress, fromAddress);
+      const result = await initiateCrossfiTransfer(amount, toAddress, fromAddress, currency);
       txId = result.transactionHash;
     } else {
       return res.status(400).json({ error: 'Invalid fromChain' });

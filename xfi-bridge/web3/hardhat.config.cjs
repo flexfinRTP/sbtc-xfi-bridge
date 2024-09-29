@@ -1,3 +1,4 @@
+require("@nomiclabs/hardhat-waffle");
 require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -15,7 +16,7 @@ module.exports = {
     },
   },
   paths: {
-    sources: "./contracts",
+    sources: "./contracts/crossfi",  // Update this line
     tests: "./test",
     cache: "./cache",
     artifacts: "./artifacts"
